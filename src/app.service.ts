@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Session } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, Session } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
@@ -40,14 +40,10 @@ export class AppService {
     if(board[i] === ' '){
           positions_empty.push(i);
     }}
-  // const occupied_positions = positions_o.concat(positions_x);
-  // console.log(`x positions ${positions_x}`);
-  // console.log(`o positions ${positions_o}`);
-  // console.log(`empty positions ${positions_empty}`);
-  // console.log(`occupied positions ${occupied_positions}`);
 
   // First move of the game
     if(isFirst){
+      console.log('This is the first');
       if(positions_empty.length < 8 || positions_o.length>0 || positions_x.length>1){
         
             throw new BadRequestException('Invalid request');
@@ -111,6 +107,10 @@ export class AppService {
       const board1 = board.split('');
       board1[6] = 'o'
       board = board1.join('');    }
+      if(board[0] =='x' && board[9] =='x' && board[4] =='o'){
+        const board1 = board.split('');
+        board1[2] = 'o'
+        board = board1.join('');    }
     if(board[4] =='x' && board[0] =='x'){
       const board1 = board.split('');
       board1[6] = 'o'
@@ -151,12 +151,12 @@ export class AppService {
       // possible vertical alignments
       if(board[0] && board[3] && board[6] && (Array.from(checkSet.add(board[0]).add(board[3]).add(board)).length === 1)){
         console.log(`${board[3]} Wins!!`);
-        //this.endGame();
+        session.visits=0;
       }
       checkSet.clear();
       if(board[1] && board[4] && board[7] && (Array.from(checkSet.add(board[1]).add(board[4]).add(board[7])).length === 1)){
         console.log(`${board[4]} Wins!!`);
-        //this.endGame();
+        session.visits =0;
       }
       checkSet.clear();
       if(board[2] && board[5] && board[8] && (Array.from(checkSet.add(board[2]).add(board[5]).add(board[8])).length === 1)){
@@ -167,23 +167,23 @@ export class AppService {
       // possible horizontal alignments
       if(board[0] && board[1] && board[2] && (Array.from(checkSet.add(board[0]).add(board[1]).add(board[2])).length === 1)){
         console.log(`${board[1]} Wins!!`);
-        //this.endGame();
+        session.visits = 0;
       }
       checkSet.clear();
       if(board[3] && board[4] && board[5] && (Array.from(checkSet.add(board[3]).add(board[4]).add(board[5])).length === 1)){
         console.log(`${board[3]} Wins!!`);
-       // this.endGame();
+       session.visits
       }
       checkSet.clear();
       if(board[6] && board[7] && board[8] && (Array.from(checkSet.add(board[6]).add(board[7]).add(board[8])).length === 1)){
         console.log(`${board[8]} Wins!!`);
-        //this.endGame(); please clear counter if exist
+        session.visits;
       }
       checkSet.clear();
       // possible diagonal alignments
       if((board[0] && board[4] && board[8] && (Array.from(checkSet.add(board[0]).add(board[4]).add(board[8])).length === 1)) || (board[2] && board[4] && board[6] && (Array.from(checkSet.add(board[2]).add(board[4]).add(board[6])).length === 1))){
         console.log(`${board[3]} Wins!!`);
-        //this.endGame(); this clean counter if exist
+        session.visits = 0;
       }
       checkSet.clear();
 
@@ -194,6 +194,9 @@ export class AppService {
   
 }
   
+  }
+  if(session.visits == 0){
+    throw new HttpException("Game is over", HttpStatus.FORBIDDEN);
   }
 }
 }
