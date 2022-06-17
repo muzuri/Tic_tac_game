@@ -1,17 +1,11 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, Session } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
   constructor(
   ){}
 
-  split_board(board: string, index: number){
-    const board1 = board.split('');
-    board1[index] = 'o'
-    board = board1.join('');
-    return board
-  }
-  validateBoard(board: string, isFirst: boolean){
+  checkValidation_request_characters(board: string){
 
     const allowedChar = ['x','o',' '];
     console.log(`number of characters in the request ${board.length}`);
@@ -25,6 +19,206 @@ export class AppService {
         throw new BadRequestException('Characters should be valid');
     }
     })
+  }
+  // This function help us to place the o in the right place
+  split_board(board: string, index: number){
+    const board1 = board.split('');
+    board1[index] = 'o'
+    board = board1.join('');
+    return board;
+  }
+  // This function help us to check the position of a specific element in the board
+  check_position(board: string, element: string){
+    var positions = [];
+  for (let i=0; i< board.length; i++){
+    if(board[i] === element){
+       positions.push(i);
+    }}
+    return positions;
+  }
+  
+  // This function help player 'o' to defend so that it can force
+  // tie instead of losing the Game.
+  // it will try to defend for each possible case in the board to avoid 'x' to win our server(player 'o')
+  defend(board){
+    if(board[0] =='x' && board[3] =='x' && board[6]==' '){
+      board = this.split_board(board, 6);
+    }
+    if(board[6] =='x' && board[3] =='x' && board[0]==' '){
+      board = this.split_board(board, 0);
+    }
+    if(board[0] =='x' && board[6] =='x' && board[3]==' '){
+      board = this.split_board(board, 3);    }
+    if(board[4] =='x' && board[2] =='x' && board[6]==' '){
+      board = this.split_board(board, 6);
+    }
+    if(board[6] =='x' && board[2] =='x' && board[4]==' '){
+      board = this.split_board(board, 4);
+    }
+    if(board[4] =='x' && board[6] =='x' && board[2]==' '){
+      board = this.split_board(board, 2);
+    }
+    if(board[0] =='x' && board[1] =='x' && board[2] ==' '){
+      board = this.split_board(board, 2);
+    }
+    if(board[0] =='x' && board[2] =='x' && board[1] ==' '){
+      board = this.split_board(board, 1);
+    }
+    if(board[1] =='x' && board[2] =='x' && board[0] ==' '){
+      board = this.split_board(board, 0);
+    }
+    if(board[0] =='x' && board[4] =='x' && board[8] ==' '){
+      board = this.split_board(board, 8);
+    }
+    if(board[0] =='x' && board[8] =='x' && board[4] ==' '){
+      board = this.split_board(board, 4);
+    }
+    if(board[8] =='x' && board[4] =='x' && board[0] ==' '){
+      board = this.split_board(board, 0);
+    }
+    if(board[3] =='x' && board[4] =='x' && board[5] ==' '){
+      board = this.split_board(board, 5);
+    }
+    if(board[3] =='x' && board[5] =='x' && board[4] ==' '){
+      board = this.split_board(board, 4);
+    }
+    if(board[4] =='x' && board[5] =='x' && board[3] ==' '){
+      board = this.split_board(board, 3);
+    }
+    if(board[6] =='x' && board[7] =='x' && board[8] ==' '){
+      board = this.split_board(board, 8);
+    }
+    if(board[6] =='x' && board[8] =='x' && board[7] ==' '){
+      board = this.split_board(board, 7);
+    }
+    if(board[7] =='x' && board[8] =='x' && board[6] ==' '){
+      board = this.split_board(board, 6);
+    }
+    if(board[1] =='x' && board[4] =='x' && board[7]==' '){
+      board = this.split_board(board, 7);
+    }
+    if(board[1] =='x' && board[7] =='x' && board[4]==' '){
+      board = this.split_board(board, 4);
+    }
+    if(board[4] =='x' && board[7] =='x' && board[1]==' '){
+      board = this.split_board(board, 1);
+    }
+    if(board[2] =='x' && board[5] =='x' && board[8]==' '){
+      board = this.split_board(board, 8);
+    }
+    if(board[2] =='x' && board[8] =='x' && board[5]==' '){
+      board = this.split_board(board, 5);
+    }
+    if(board[8] =='x' && board[5] =='x' && board[2]==' '){
+      board = this.split_board(board, 2);
+    }
+    return board;
+  }
+  // The function (has_o_won) should check each opportunity to make o winning the game
+  // because 'o' should always win.
+  has_o_won(board:string, session: any){
+    session.won = false;
+    if(board[0] =='o' && board[3] =='o' && board[6]==' '){
+      board = this.split_board(board, 6);
+      session.won = true;
+    }
+    if(board[6] =='o' && board[3] =='o' && board[0]==' '){
+      board = this.split_board(board, 0);
+      session.won = true;
+    }
+    if(board[0] =='o' && board[6] =='o' && board[3]==' '){
+      board = this.split_board(board, 3);
+      session.won = true;
+    }
+  
+    if(board[4] =='o' && board[2] =='o' && board[6]==' '){
+      board = this.split_board(board, 6);
+      session.won = true;
+    }
+    if(board[6] =='o' && board[2] =='o' && board[4]==' '){
+      board = this.split_board(board, 4);
+      session.won = true;
+    }
+    if(board[4] =='o' && board[6] =='o' && board[2]==' '){
+      board = this.split_board(board, 2);
+      session.won = true;
+    }
+    if(board[0] =='o' && board[1] =='o' && board[2] ==' '){
+      board = this.split_board(board, 2);
+      session.won = true;
+    }
+    if(board[0] =='o' && board[2] =='o' && board[1] ==' '){
+      board = this.split_board(board, 1);
+      session.won = true;
+    }
+    if(board[1] =='o' && board[2] =='o' && board[0] ==' '){
+      board = this.split_board(board, 0);
+      session.won = true;
+    }
+    if(board[0] =='o' && board[4] =='o' && board[8] ==' '){
+      board = this.split_board(board, 8);
+      session.won = true;
+    }
+    if(board[0] =='o' && board[8] =='o' && board[4] ==' '){
+      board = this.split_board(board, 4);
+      session.won = true;
+    }
+    if(board[8] =='o' && board[4] =='o' && board[0] ==' '){
+      board = this.split_board(board, 0);
+      session.won = true;
+    }
+    if(board[3] =='o' && board[4] =='o' && board[5] ==' '){
+      board = this.split_board(board, 5);
+      session.won = true;
+    }
+    if(board[3] =='o' && board[5] =='o' && board[4] ==' '){
+      board = this.split_board(board, 4);
+      session.won = true;
+    }
+    if(board[4] =='o' && board[5] =='o' && board[3] ==' '){
+      board = this.split_board(board, 3);
+      session.won = true;
+    }
+    if(board[6] =='o' && board[7] =='o' && board[8] ==' '){
+      board = this.split_board(board, 8);
+      session.won = true;
+    }
+    if(board[6] =='o' && board[8] =='o' && board[7] ==' '){
+      board = this.split_board(board, 7);
+      session.won = true;
+    }
+    if(board[7] =='o' && board[8] =='o' && board[6] ==' '){
+      board = this.split_board(board, 6);
+      session.won = true;
+    }
+    if(board[1] =='o' && board[4] =='o' && board[7]==' '){
+      board = this.split_board(board, 7);
+      session.won = true;
+    }
+    if(board[1] =='o' && board[7] =='o' && board[4]==' '){
+      board = this.split_board(board, 4);
+      session.won = true;
+    }
+    if(board[4] =='o' && board[7] =='o' && board[1]==' '){
+      board = this.split_board(board, 1);
+      session.won = true;
+    }
+    if(board[2] =='o' && board[5] =='o' && board[8]==' '){
+      board = this.split_board(board, 8);
+      session.won = true;
+    }
+    if(board[2] =='o' && board[8] =='o' && board[5]==' '){
+      board = this.split_board(board, 5);
+      session.won = true;
+    }
+    if(board[8] =='o' && board[5] =='o' && board[2]==' '){
+      board = this.split_board(board, 2);
+      session.won = true;
+    }
+    return board;
+  }
+  validateBoard(board: string, isFirst: boolean){
+    this.checkValidation_request_characters(board);
     var positions_x = [];
     var positions_o = [];
     var positions_empty = []; 
@@ -47,7 +241,6 @@ export class AppService {
       if(positions_empty.length < 8 || positions_o.length>0 || positions_x.length>1){
         
             throw new BadRequestException('Invalid request');
-      
       }
       if(!positions_x.includes(4)){
         const board1 = board.split('');
@@ -55,148 +248,71 @@ export class AppService {
         board = board1.join('');
       }
       else {
-        this.split_board(board, 2)
+        board = this.split_board(board, 2)
       }
 
     }
-    console.log(`this is the console ${board}`);
     return board;
   
   }
   
   validateBoard1(board: string, session){
+    this.checkValidation_request_characters(board);
+    var positions_x = this.check_position(board, 'x');
+    var positions_o =  this.check_position(board, 'o');
+    var positions_empty =  this.check_position(board, ' ');
+    
+    
+    var positions_returned_x = this.check_position(session.lastreturned, 'x');
+    var positions_returned_o =  this.check_position(session.lastreturned, 'o');
 
-    var positions_x = [];
-    var positions_o = [];
-    var positions_empty = []; 
-  for (let i=0; i< board.length; i++){
-    if(board[i] === 'o'){
-       positions_o.push(i);
-    }}
-  for (let i=0; i< board.length; i++){
-    if(board[i] === 'x'){
-        positions_x.push(i);
-      }}
-  for (let i=0; i< board.length; i++){
-    if(board[i] === ' '){
-          positions_empty.push(i);
-    }}
-  const occupied_positions = positions_o.concat(positions_x);
-  console.log(`x positions ${positions_x}`);
-  console.log(`o positions ${positions_o}`);
-  console.log(`empty positions ${positions_empty}`);
-  console.log(`occupied positions ${occupied_positions}`);
+    const occupied_positions = positions_o.concat(positions_x);
+    const occupied_returned_positions = positions_returned_o.concat(positions_returned_x);
+    console.log(`x positions ${positions_x}`);
+    console.log(`o positions ${positions_o}`);
+    console.log(`empty positions ${positions_empty}`);
+    console.log(`occupied positions ${occupied_positions}`);
 
   // Second move of the Game
   if(session.visits ==1){
     console.log(`we are on the session   ${session.visits}`)
-    console.log(session.lastreturned,"===", board);
-    if(session.lastreturned === board || positions_o.length !=1)
+    if(session.lastreturned === board)
     {
       throw new BadRequestException('Invalid Request');
     }
     if(positions_o.length !=1){
       throw new BadRequestException('Invalid request');
     }
-    if(board[0] =='x' && board[3] =='x' && board[6]!='o'){
-      const board1 = board.split('');
-        board1[6] = 'o'
-        board = board1.join('');
+    if(positions_o.length + 1 < positions_x.length || positions_x.length + 1 < positions_o.length){
+      throw new BadRequestException('Invalid request');
     }
-    if(board[4] =='x' && board[2] =='x' && board[6]!='o'){
-      const board1 = board.split('');
-      board1[6] = 'o'
-      board = board1.join('');    }
-      if(board[0] =='x' && board[9] =='x' && board[4] =='o'){
-        const board1 = board.split('');
-        board1[2] = 'o'
-        board = board1.join('');    }
-    if(board[4] =='x' && board[0] =='x'){
-      const board1 = board.split('');
-      board1[6] = 'o'
-      board = board1.join('');    }
-
+    board = this.defend(board);
+    //board = this.check_tie(board);
+    return board;
   }
-    // Third move of the player
-    if(session.visits ==2){
+    // The other remaining  move of the player
+    if(session.visits ==2 || session.visits == 3 || session.visits == 4){
       console.log(`we are on the session   ${session.visits}`)
-      console.log(session.lastreturned,"===", board);
-      if(session.lastreturned === board || positions_o.length !=2 ||
-         positions_x.length<session.lastreturned.length)
-      {
+
+      if(occupied_positions.length <= occupied_returned_positions.length){
         throw new BadRequestException('Invalid Request');
       }
-      if(board[0] =='x' && board[1] =='x' && board[2]!='o'){
-        this.split_board(board, 2);
+
+      if(occupied_returned_positions.length + 1 < occupied_positions.length){
+        throw new BadRequestException('Invalid Request');
       }
-      if(board[4] =='x' && board[2] =='x' && board[6]!='o'){
-        this.split_board(board, 6);
-      }
-      if(board[1] =='x' && board[2] =='x' && board[0]=='o'){
-        this.split_board(board, 0);
-      }
-      if(board[4] =='x' && board[0] =='x'){
-        this.split_board(board, 8);
-      }
-      
-      const board1 = board.split('');
-      board1[5] = 'o'
-      board = board1.join('');
-  
+    board = this.has_o_won(board, session);
+    if(session.won){
+      session.visits = undefined
+      session.lastreturned = undefined
+      console.log(`This is where we won`);
+      return 'O won!!!';
     }
-    if(session.visits >= 3){
-
- 
-      var checkSet = new Set()
-      // possible vertical alignments
-      if(board[0] && board[3] && board[6] && (Array.from(checkSet.add(board[0]).add(board[3]).add(board)).length === 1)){
-        console.log(`${board[3]} Wins!!`);
-        session.visits=0;
-      }
-      checkSet.clear();
-      if(board[1] && board[4] && board[7] && (Array.from(checkSet.add(board[1]).add(board[4]).add(board[7])).length === 1)){
-        console.log(`${board[4]} Wins!!`);
-        session.visits =0;
-      }
-      checkSet.clear();
-      if(board[2] && board[5] && board[8] && (Array.from(checkSet.add(board[2]).add(board[5]).add(board[8])).length === 1)){
-        console.log(`${board[2]} Wins!!`);
-        session.visits =0;
-      }
-      checkSet.clear();
-      // possible horizontal alignments
-      if(board[0] && board[1] && board[2] && (Array.from(checkSet.add(board[0]).add(board[1]).add(board[2])).length === 1)){
-        console.log(`${board[1]} Wins!!`);
-        session.visits = 0;
-      }
-      checkSet.clear();
-      if(board[3] && board[4] && board[5] && (Array.from(checkSet.add(board[3]).add(board[4]).add(board[5])).length === 1)){
-        console.log(`${board[3]} Wins!!`);
-       session.visits
-      }
-      checkSet.clear();
-      if(board[6] && board[7] && board[8] && (Array.from(checkSet.add(board[6]).add(board[7]).add(board[8])).length === 1)){
-        console.log(`${board[8]} Wins!!`);
-        session.visits;
-      }
-      checkSet.clear();
-      // possible diagonal alignments
-      if((board[0] && board[4] && board[8] && (Array.from(checkSet.add(board[0]).add(board[4]).add(board[8])).length === 1)) || (board[2] && board[4] && board[6] && (Array.from(checkSet.add(board[2]).add(board[4]).add(board[6])).length === 1))){
-        console.log(`${board[3]} Wins!!`);
-        session.visits = 0;
-      }
-      checkSet.clear();
-
-  return {
-      board_size:board.length,
-      board: board.toString().replace(/,/g,''),
-      board1: board,
+    else {
+      board = this.defend(board);
+      return board;
+    }
   
-}
-  
-  }
-  if(session.visits == 0){
-    throw new HttpException("Game is over", HttpStatus.FORBIDDEN);
-  }
+    } 
 }
 }

@@ -1,6 +1,5 @@
-import { Controller, Get, Query, Req, Res, Session } from '@nestjs/common';
+import { Controller, Get, Query, Session } from '@nestjs/common';
 import { AppService } from './app.service';
-import e, { Request, Response } from 'express';
 
 @Controller()
 export class AppController {
@@ -13,19 +12,20 @@ export class AppController {
   ) {
 
     const isFirst = session.visits == undefined ? true : false;
-    console.log(`is it the first time player ${isFirst}`);
+    // Check if it the first time you play the game
     if(isFirst) 
     {
       const board_returned = await this.appService.validateBoard(board, isFirst);
       session.lastreturned = board_returned;
       console.log(`this is the last1111 ${session.lastreturned}`);
+      board = board_returned.toString();
     }
-    else {
-      
-      console.log(`this is the last visit222 ${session.lastreturned}`);
+    // Check for other times of playing the game where session is from 1 up to 4
+    else {  
       const board_returned = await this.appService.validateBoard1(board, session)
       session.lastreturned = board_returned;
-      
+      console.log(`this is the last visit222 ${board_returned}`);
+      board = board_returned.toString();
     }
     session.visits = session.visits ? session.visits + 1 : 1;
     return board
