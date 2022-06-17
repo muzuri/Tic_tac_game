@@ -17,14 +17,14 @@ export class AppController {
     {
       const board_returned = await this.appService.validateBoard(board, isFirst);
       session.lastreturned = board_returned;
-      console.log(`this is the last1111 ${session.lastreturned}`);
+      console.log(`The last returned session ${session.lastreturned}`);
       board = board_returned.toString();
     }
     // Check for other times of playing the game where session is from 1 up to 4
     else {  
       const board_returned = await this.appService.validateBoard1(board, session)
       session.lastreturned = board_returned;
-      console.log(`this is the last visit222 ${board_returned}`);
+      console.log(`The last returned visit is ${board_returned}`);
       board = board_returned.toString();
     }
     session.visits = session.visits ? session.visits + 1 : 1;
