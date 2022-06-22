@@ -1,6 +1,8 @@
 ## Description
- This an API that help everyone to plays the game called tic-tac-toe in the US, and called naughts and crosses in
+This an API that help everyone to plays the game called tic-tac-toe in the US, and called naughts and crosses in
 some countries.
+For this case the server is playing as o and the person as x otherwise is empty space.
+This Game should be optimal the server will always win or tie he will not loose the game. it is only the API built in Nest Js framework.
 ## Installation
 
 ```bash
